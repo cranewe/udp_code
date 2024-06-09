@@ -3,10 +3,9 @@ import random
 import time
 import struct
 
-SERVER_IP = "0.0.0.0"
+SERVER_IP = "192.168.78.134"
 SERVER_PORT = 8080
-BUFFER_SIZE = 2048
-DROP_RATE = 0.4  # 规定0.4的丢包率SS
+DROP_RATE = 0.4  # 规定0.4的丢包率
 VERSION = 2
 STUDENT_ID = "221002606张宸玮"
 
@@ -53,16 +52,17 @@ sock.bind((SERVER_IP, SERVER_PORT))
 print(f"Server listening on {SERVER_IP}:{SERVER_PORT}")
 
 while True:#持续等待接受客户端发送的报文
-    data, addr = sock.recvfrom(BUFFER_SIZE)
+    data, addr = sock.recvfrom(2048)
     if data.decode() == "SYN":#接收SYN
         sock.sendto("SYN-ACK".encode(), addr)#发送SYN-ACK
-        data, addr = sock.recvfrom(BUFFER_SIZE)
+        data, addr = sock.recvfrom(2048)
         if data.decode() == "ACK":#接收到ACK
               print(f"成功与客户端{addr}建立连接！\n")
               while True:
-                    data, addr = sock.recvfrom(BUFFER_SIZE)                  
+                    data, addr = sock.recvfrom(2048)                  
                     seq_no, ver, student_id, birthday, attempts,random_data = parse_packet(data)
-                    print(f"Received message from {addr}: Seq_no={seq_no}, Ver={ver}, Student_ID={student_id}, Attempts={attempts}, Brthday_Time={birthday}")#输出接受到的client报文信息
+                    print(f"Received message from {addr}: Seq_no={seq_no}, Ver={ver}, Student_ID={student_id}, Attempts={attempts}, Brthday_Time={birthday}")
+                    #输出接受到的client报文信息
 
                     #按照丢包率随机丢失client报文
                     if random.random() < DROP_RATE:

@@ -7,13 +7,12 @@ import statistics
 
 #接收命令行输入
 parser = argparse.ArgumentParser(description="UDP Client")
-parser.add_argument("server_ip", type=str, help="Server IP address")
-parser.add_argument("server_port", type=int, help="Server port number")
+parser.add_argument("server_ip", type=str, help="Server IP")
+parser.add_argument("server_port", type=int, help="Server port")
 args = parser.parse_args()
 
 SERVER_IP = args.server_ip
 SERVER_PORT = args.server_port
-BUFFER_SIZE = 2048
 TIMEOUT = 0.1  # 100ms
 MAX_RETRIES = 2
 VERSION = 2
@@ -71,7 +70,7 @@ def parse_packet(packet):#解析报文信息
 
 
 sock.sendto("SYN".encode(), server_address)#发送SYN给server
-data, server = sock.recvfrom(BUFFER_SIZE)
+data, server = sock.recvfrom(2048)
 if data.decode() == "SYN-ACK":#接收SYN-ACK
   sock.sendto("ACK".encode(), server_address)
   print("成功与服务器建立连接！\n")
@@ -86,7 +85,7 @@ if data.decode() == "SYN-ACK":#接收SYN-ACK
         sock.sendto(message, server_address)
         
         try:
-            data, server = sock.recvfrom(BUFFER_SIZE)
+            data, server = sock.recvfrom(2048)
             end_time = time.perf_counter()
             rtt = (end_time - start_time) * 1000  # 计算RTT
             seq_no, ver, student_id, server_time, random_data = parse_packet(data)
